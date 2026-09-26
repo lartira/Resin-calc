@@ -6,23 +6,12 @@ import Settings from './components/Settings';
 import ColorGallery from './components/ColorGallery';
 import MaterialGallery from './components/MaterialGallery';
 import ErrorBoundary from './components/ErrorBoundary'; // Safety net
+import UpdateNotifier from './components/UpdateNotifier';
 import { dataHandler } from './utils/dataHandler';
 import { translations } from './utils/translations';
 
 import { useDebounce } from './utils/useDebounce';
-
-// Helper to detect system language
-const getSystemLanguage = () => {
-    const rawLang = navigator.language || navigator.userLanguage || 'en';
-    const langCode = rawLang.split('-')[0];
-
-    // Map special cases
-    if (langCode === 'nb' || langCode === 'nn') return 'no';
-
-    // Supported languages
-    const supported = ['da', 'en', 'sv', 'no', 'de', 'pl', 'cs', 'hu', 'ro', 'bg'];
-    return supported.includes(langCode) ? langCode : 'en'; // Default to English if not supported
-};
+import { getSystemLanguage } from './utils/systemLanguage';
 
 function App() {
     const [activeTab, setActiveTab] = useState('calculator');
@@ -142,7 +131,8 @@ function App() {
     // Close Confirmation & Force Save Logic
     useEffect(() => {
         if (window.electronAPI) {
-            window.electronAPI.onCloseIntent(async () => {
+            // Return the unsubscribe so only the handler with the latest data stays registered
+            return window.electronAPI.onCloseIntent(async () => {
                 setIsClosing(true);
                 // Small delay to allow React to render the overlay before IPC blocks
                 await new Promise(resolve => setTimeout(resolve, 50));
@@ -507,6 +497,8 @@ function App() {
                     Syncing...
                 </div>
             )}
+
+            <UpdateNotifier />
 
             {/* CLOSE SAVING OVERLAY */}
             {isClosing && (

@@ -12,6 +12,17 @@ contextBridge.exposeInMainWorld('electronAPI', {
     savePdf: (bg, filename) => ipcRenderer.invoke('save-pdf', { dataBase64: bg, filename }),
     saveSession: (data) => ipcRenderer.invoke('save-session', data),
     getSession: () => ipcRenderer.invoke('get-session'),
-    onCloseIntent: (callback) => ipcRenderer.on('app-close-intent', callback),
-    confirmClose: () => ipcRenderer.send('app-close-confirmed')
+    onCloseIntent: (callback) => {
+        ipcRenderer.on('app-close-intent', callback);
+        return () => ipcRenderer.removeListener('app-close-intent', callback);
+    },
+    confirmClose: () => ipcRenderer.send('app-close-confirmed'),
+    checkForUpdates: () => ipcRenderer.invoke('update-check'),
+    downloadUpdate: () => ipcRenderer.invoke('update-download'),
+    installUpdate: () => ipcRenderer.invoke('update-install'),
+    onUpdateStatus: (callback) => {
+        const listener = (_event, status) => callback(status);
+        ipcRenderer.on('update-status', listener);
+        return () => ipcRenderer.removeListener('update-status', listener);
+    }
 });

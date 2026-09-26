@@ -138,6 +138,7 @@ function createWindow() {
 
     // Close Confirmation Logic
     win.on('close', (e) => {
+        if (isInstallingUpdate) return; // Data was saved before quitAndInstall
         e.preventDefault();
         const choice = dialog.showMessageBoxSync(win, {
             type: 'question',
@@ -157,65 +158,102 @@ function createWindow() {
     });
 }
 
-// Auto Updater Events
+// Auto Updater
+// All update UI lives in the renderer (UpdateNotifier.jsx). Main only forwards
+// electron-updater events as 'update-status' messages and acts on IPC requests.
 autoUpdater.autoDownload = false; // We ask user first
+// UPDATE_DEV_TEST=1 lets `npm run dev` check against dev-app-update.yml (e.g. a local test feed)
+if (process.env.UPDATE_DEV_TEST) autoUpdater.forceDevUpdateConfig = true;
 
-autoUpdater.on('error', (error) => {
-    const errStr = error == null ? "unknown" : (error.stack || error).toString();
+const UPDATE_CHECK_DELAY_MS = 5 * 1000; // First check shortly after startup
+const UPDATE_CHECK_INTERVAL_MS = 4 * 60 * 60 * 1000; // Then every 4 hours
 
-    // Ignore 404 errors (missing latest.yml) - Common in dev/manual releases
-    if (errStr.includes("404") || errStr.includes("latest.yml")) {
-        console.warn("Update check failed (404/Missing Config):", errStr);
-        // Only show if manually triggered? Hard to know here.
-        // But preventing the scary red box is good.
-        if (manualCheckTriggered) {
-            dialog.showMessageBox({
-                type: 'warning',
-                title: 'Update Check Failed',
-                message: 'Could not retrieve update information from GitHub.',
-                detail: 'The release might be missing "latest.yml" or the repository is private/inaccessible.'
-            });
-            manualCheckTriggered = false;
-        }
-        return;
+let manualCheckTriggered = false;
+let isInstallingUpdate = false; // Lets the close handler step aside for quitAndInstall
+let installAfterSave = false; // Set when renderer should save before we install
+
+function sendUpdateStatus(status) {
+    for (const win of BrowserWindow.getAllWindows()) {
+        win.webContents.send('update-status', { ...status, manual: manualCheckTriggered });
     }
+}
 
-    dialog.showErrorBox('Update Error', errStr);
+// Release notes from GitHub can be HTML or a list of { version, note } objects
+function normalizeReleaseNotes(notes) {
+    if (!notes) return '';
+    if (Array.isArray(notes)) return notes.map(n => n.note || '').join('\n\n');
+    return String(notes);
+}
+
+autoUpdater.on('checking-for-update', () => {
+    sendUpdateStatus({ state: 'checking' });
 });
 
 autoUpdater.on('update-available', (info) => {
-    const choice = dialog.showMessageBoxSync({
-        type: 'info',
-        title: 'Update Available',
-        message: `Version ${info.version} is available.`,
-        detail: 'Do you want to download it now?',
-        buttons: ['Download', 'Cancel']
+    sendUpdateStatus({
+        state: 'available',
+        version: info.version,
+        releaseDate: info.releaseDate,
+        releaseNotes: normalizeReleaseNotes(info.releaseNotes)
     });
-    if (choice === 0) {
-        autoUpdater.downloadUpdate();
-    }
+    manualCheckTriggered = false;
 });
 
-autoUpdater.on('update-not-available', (info) => {
-    // Only show if manually requested? Or just log? 
-    // Usually only show dialog if user clicked "Check for Updates", 
-    // but here global listeners catch it. We might need flagged checks.
-    // For now, let's silence this global listener and handle manual check differently or just show dialog always.
-    // Better: show dialog only on manual trigger. But listeners are global.
-    // Simple approach: Logic in menu item.
+autoUpdater.on('update-not-available', () => {
+    sendUpdateStatus({ state: 'not-available' });
+    manualCheckTriggered = false;
+});
+
+autoUpdater.on('download-progress', (progress) => {
+    sendUpdateStatus({
+        state: 'downloading',
+        percent: progress.percent,
+        transferred: progress.transferred,
+        total: progress.total,
+        bytesPerSecond: progress.bytesPerSecond
+    });
 });
 
 autoUpdater.on('update-downloaded', (info) => {
-    const choice = dialog.showMessageBoxSync({
-        type: 'question',
-        title: 'Ready to Install',
-        message: 'Update downloaded. Application will restart to install.',
-        buttons: ['Restart Now', 'Later']
-    });
-    if (choice === 0) {
-        autoUpdater.quitAndInstall();
-    }
+    sendUpdateStatus({ state: 'downloaded', version: info.version });
 });
+
+autoUpdater.on('error', (error) => {
+    const errStr = error == null ? 'unknown' : (error.message || error).toString();
+    console.warn('Auto updater error:', errStr);
+    // Background checks fail silently (offline, private repo, missing latest.yml).
+    // The renderer only shows errors for manual checks or failed downloads.
+    sendUpdateStatus({ state: 'error', message: errStr });
+    manualCheckTriggered = false;
+});
+
+function checkForUpdates(manual = false) {
+    if (!app.isPackaged && !process.env.UPDATE_DEV_TEST) return; // No update feed in dev
+    manualCheckTriggered = manual;
+    autoUpdater.checkForUpdates().catch(() => { /* reported via 'error' event */ });
+}
+
+function startUpdateSchedule() {
+    setTimeout(() => checkForUpdates(false), UPDATE_CHECK_DELAY_MS);
+    setInterval(() => checkForUpdates(false), UPDATE_CHECK_INTERVAL_MS);
+}
+
+ipcMain.handle('update-check', () => checkForUpdates(true));
+
+ipcMain.handle('update-download', () => {
+    autoUpdater.downloadUpdate().catch(() => { /* reported via 'error' event */ });
+});
+
+// Save through the normal close flow first, then install (see 'app-close-confirmed')
+ipcMain.handle('update-install', (event) => {
+    installAfterSave = true;
+    event.sender.send('app-close-intent');
+});
+
+function installUpdateNow() {
+    isInstallingUpdate = true;
+    autoUpdater.quitAndInstall();
+}
 
 function createAppMenu() {
     const template = [
@@ -244,17 +282,7 @@ function createAppMenu() {
             submenu: [
                 {
                     label: 'Check for Updates',
-                    click: () => {
-                        autoUpdater.checkForUpdatesAndNotify();
-                        // Note: checkForUpdatesAndNotify only shows notification.
-                        // We want explicit dialog.
-                        // Let's use checkForUpdates() and let listeners handle it.
-                        // To show "No update available", we might need a flag or custom logic.
-                        // For MVP: Just run check. If nothing happens, user knows its up to date? 
-                        // No, bad UX.
-                        // Let's make a manual check function.
-                        manualCheck();
-                    }
+                    click: () => checkForUpdates(true)
                 },
                 {
                     label: 'About',
@@ -278,24 +306,6 @@ function createAppMenu() {
     Menu.setApplicationMenu(menu);
 }
 
-let manualCheckTriggered = false;
-function manualCheck() {
-    manualCheckTriggered = true;
-    autoUpdater.checkForUpdates();
-}
-
-// Add listener for 'update-not-available' specifically for manual checks
-autoUpdater.on('update-not-available', (info) => {
-    if (manualCheckTriggered) {
-        dialog.showMessageBox({
-            type: 'info',
-            title: 'No Updates',
-            message: 'You are using the latest version.',
-            buttons: ['OK']
-        });
-        manualCheckTriggered = false;
-    }
-});
 
 // IPC Handlers
 ipcMain.handle('get-data', async (event) => {
@@ -989,6 +999,7 @@ ipcMain.handle('import-backup', async (event, options = {}) => {
 app.whenReady().then(() => {
     createWindow();
     createAppMenu();
+    startUpdateSchedule();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -1005,6 +1016,10 @@ app.on('window-all-closed', () => {
 
 // Listener for Close Confirmation from Renderer (After Save)
 ipcMain.on('app-close-confirmed', (event) => {
+    if (installAfterSave) {
+        installUpdateNow();
+        return;
+    }
     const win = BrowserWindow.fromWebContents(event.sender);
     if (win) win.destroy();
 });
