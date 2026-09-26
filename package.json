@@ -1,7 +1,7 @@
 {
   "name": "epoxy-calculator",
   "private": true,
-  "version": "1.4.81",
+  "version": "1.4.82",
   "main": "electron/main.js",
   "description": "Epoxy Resin Calculator",
   "author": "Epoxy Calc User",
@@ -68,5 +68,10 @@
       "installerIcon": "public/ikon.ico",
       "uninstallerIcon": "public/ikon.ico"
     }
+  },
+  "allowScripts": {
+    "electron@28.3.3": true,
+    "esbuild@0.21.5": true,
+    "core-js": false
   }
 }
