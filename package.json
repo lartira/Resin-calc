@@ -39,15 +39,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/feattergruppen/Epoxy-Calculator.git"
+    "url": "https://github.com/lartira/Resin-calc.git"
   },
   "build": {
     "appId": "com.epoxy.calculator",
     "productName": "Epoxy Calculator",
     "publish": {
       "provider": "github",
-      "owner": "feattergruppen",
-      "repo": "Epoxy-Calculator"
+      "owner": "lartira",
+      "repo": "Resin-calc"
     },
     "files": [
       "dist/**/*",

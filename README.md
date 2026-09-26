@@ -89,7 +89,7 @@ This project is open source.
 
 > [!TIP]
 > **Too tech-savvy?**
-> Or if you don't bother with all the codeing, here's an setup.exe file: [Download Release](https://github.com/feattergruppen/Epoxy-Calculator/releases/tag/Epoxy-Calculator-v.1.4.81)
+> Or if you don't bother with all the codeing, here's an setup.exe file: [Download Release](https://github.com/lartira/Resin-calc/releases/latest)
 
 ## � To-Do
 

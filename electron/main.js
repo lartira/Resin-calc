@@ -267,7 +267,7 @@ function createAppMenu() {
                             buttons: ['Visit Website', 'OK']
                         });
                         if (response === 0) {
-                            shell.openExternal('https://github.com/feattergruppen/Epoxy-Calculator');
+                            shell.openExternal('https://github.com/lartira/Resin-calc');
                         }
                     }
                 }
