@@ -2,6 +2,11 @@ const appTitleVersion = `EpoxyCalc v${import.meta.env.PACKAGE_VERSION}`;
 
 export const translations = {
     da: {
+        setTheme: "Tema",
+        themeLight: "Lys",
+        themeDark: "Mørk",
+        themeOcean: "Ocean",
+        themeSunset: "Solnedgang",
         appTitle: appTitleVersion,
         tabCalculator: "Beregner",
         tabHistory: "Historik",
@@ -102,7 +107,6 @@ export const translations = {
         btnChange: "Ændr",
         btnAdd: "Tilføj",
         langLabel: "Sprog / Language",
-        setTheme: "Tema / Theme",
         currLabel: "Valuta / Currency",
         setProfileTitle: "Firma / Kunstner Profil",
         setCompanyName: "Navn (vises på PDF)",
@@ -181,6 +185,11 @@ export const translations = {
         msgSyncError: "Fejl under synkronisering: "
     },
     en: {
+        setTheme: "Theme",
+        themeLight: "Light",
+        themeDark: "Dark",
+        themeOcean: "Ocean",
+        themeSunset: "Sunset",
         appTitle: appTitleVersion,
         tabCalculator: "Calculator",
         tabHistory: "History",
@@ -281,7 +290,6 @@ export const translations = {
         btnChange: "Change",
         btnAdd: "Add",
         langLabel: "Language",
-        setTheme: "Theme",
         currLabel: "Currency",
         setProfileTitle: "Company / Artist Profile",
         setCompanyName: "Name (shown on PDF)",
@@ -363,6 +371,11 @@ export const translations = {
         msgSyncError: "Sync Error: "
     },
     sv: {
+        setTheme: "Tema",
+        themeLight: "Ljust",
+        themeDark: "Mörkt",
+        themeOcean: "Hav",
+        themeSunset: "Solnedgång",
         appTitle: appTitleVersion,
         tabCalculator: "Kalkylator",
         tabHistory: "Historik",
@@ -514,6 +527,11 @@ export const translations = {
         msgSyncError: "Synkroniseringsfel: "
     },
     no: {
+        setTheme: "Tema",
+        themeLight: "Lyst",
+        themeDark: "Mørkt",
+        themeOcean: "Hav",
+        themeSunset: "Solnedgang",
         appTitle: appTitleVersion,
         tabCalculator: "Kalkulator",
         tabHistory: "Historikk",
@@ -667,6 +685,11 @@ export const translations = {
         msgSyncError: "Synkroniseringsfeil: "
     },
     de: {
+        setTheme: "Thema",
+        themeLight: "Hell",
+        themeDark: "Dunkel",
+        themeOcean: "Ozean",
+        themeSunset: "Sonnenuntergang",
         appTitle: appTitleVersion,
         tabCalculator: "Rechner",
         tabHistory: "Verlauf",
@@ -766,7 +789,6 @@ export const translations = {
         btnChange: "Ändern",
         btnAdd: "Hinzufügen",
         langLabel: "Sprache",
-        setTheme: "Thema",
         currLabel: "Währung",
         setProfileTitle: "Firmen / Künstlerprofil",
         setCompanyName: "Name (auf PDF)",
@@ -845,6 +867,11 @@ export const translations = {
         msgSyncError: "Sync-Fehler: "
     },
     pl: {
+        setTheme: "Motyw",
+        themeLight: "Jasny",
+        themeDark: "Ciemny",
+        themeOcean: "Ocean",
+        themeSunset: "Zachód słońca",
         appTitle: appTitleVersion,
         tabCalculator: "Kalkulator",
         tabHistory: "Historia",
@@ -939,7 +966,6 @@ export const translations = {
         btnChange: "Zmień",
         btnAdd: "Dodaj",
         langLabel: "Język",
-        setTheme: "Motyw",
         currLabel: "Waluta",
         setProfileTitle: "Profil Firmy / Artysty",
         setCompanyName: "Nazwa (na PDF)",
@@ -1017,6 +1043,11 @@ export const translations = {
         msgSyncError: "Błąd synchronizacji: "
     },
     cs: {
+        setTheme: "Téma",
+        themeLight: "Světlé",
+        themeDark: "Tmavé",
+        themeOcean: "Oceán",
+        themeSunset: "Západ slunce",
         appTitle: appTitleVersion,
         tabCalculator: "Kalkulačka",
         tabHistory: "Historie",
@@ -1098,7 +1129,6 @@ export const translations = {
         btnChange: "Změnit",
         btnAdd: "Přidat",
         langLabel: "Jazyk",
-        setTheme: "Téma",
         currLabel: "Měna",
         setProfileTitle: "Profil Firmy / Umělce",
         setCompanyName: "Jméno (na PDF)",
@@ -1169,6 +1199,11 @@ export const translations = {
         phNewCat: "Nová kategorie..."
     },
     hu: {
+        setTheme: "Téma",
+        themeLight: "Világos",
+        themeDark: "Sötét",
+        themeOcean: "Óceán",
+        themeSunset: "Naplemente",
         appTitle: appTitleVersion,
         tabCalculator: "Számológép",
         tabHistory: "Előzmények",
@@ -1242,7 +1277,6 @@ export const translations = {
         btnChange: "Módosítás",
         btnAdd: "Hozzáadás",
         langLabel: "Nyelv",
-        setTheme: "Téma",
         currLabel: "Valuta",
         setProfileTitle: "Cég / Művész Profil",
         setCompanyName: "Név (PDF-en)",
@@ -1313,6 +1347,11 @@ export const translations = {
         phNewCat: "Új kategória..."
     },
     ro: {
+        setTheme: "Temă",
+        themeLight: "Luminos",
+        themeDark: "Întunecat",
+        themeOcean: "Ocean",
+        themeSunset: "Apus",
         appTitle: appTitleVersion,
         tabCalculator: "Calculator",
         tabHistory: "Istoric",
@@ -1387,7 +1426,6 @@ export const translations = {
         btnAdd: "Adaugă",
         langLabel: "Limbă",
         langLabel: "Limbă",
-        setTheme: "Temă",
         currLabel: "Monedă",
         setProfileTitle: "Profil Companie / Artist",
         setCompanyName: "Nume (pe PDF)",
@@ -1466,6 +1504,11 @@ export const translations = {
         phNewCat: "Categorie nouă..."
     },
     bg: {
+        setTheme: "Тема",
+        themeLight: "Светла",
+        themeDark: "Тъмна",
+        themeOcean: "Океан",
+        themeSunset: "Залез",
         appTitle: appTitleVersion,
         tabCalculator: "Калкулатор",
         tabHistory: "История",
@@ -1544,7 +1587,6 @@ export const translations = {
         tipInvoiceSeq: "Авто-ресет нова год. Старт: 001",
         langLabel: "Език",
         langLabel: "Език",
-        setTheme: "Тема",
         currLabel: "Валута",
         setProfileTitle: "Профил на фирма/художник",
         setCompanyName: "Име (в PDF)",

@@ -745,10 +745,10 @@ const Settings = ({
                             onChange={handleChange}
                             className="mt-1 block w-full rounded-md border-skin-border shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border bg-skin-input text-skin-base-text"
                         >
-                            <option value="light">Lys / Light</option>
-                            <option value="dark">Mørk / Dark</option>
-                            <option value="ocean">Ocean</option>
-                            <option value="sunset">Solnedgang / Sunset</option>
+                            <option value="light">{t('themeLight')}</option>
+                            <option value="dark">{t('themeDark')}</option>
+                            <option value="ocean">{t('themeOcean')}</option>
+                            <option value="sunset">{t('themeSunset')}</option>
                         </select>
                     </div>
                 </div>
