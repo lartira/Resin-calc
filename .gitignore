@@ -1,3 +1,4 @@
 node_modules
 dist-electron/
 dist-electron/
+scripts/.demo-data.json

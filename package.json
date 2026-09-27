@@ -1,7 +1,7 @@
 {
   "name": "epoxy-calculator",
   "private": true,
-  "version": "1.4.83",
+  "version": "1.4.84",
   "main": "electron/main.js",
   "description": "Epoxy Resin Calculator",
   "author": "Epoxy Calc User",
@@ -12,7 +12,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "pack": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder"
+    "dist": "npm run build && electron-builder",
+    "screenshots": "npm run build && node scripts/make-demo-data.mjs && electron scripts/screenshots.js"
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
