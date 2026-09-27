@@ -1,7 +1,7 @@
 {
   "name": "epoxy-calculator",
   "private": true,
-  "version": "1.4.82",
+  "version": "1.4.83",
   "main": "electron/main.js",
   "description": "Epoxy Resin Calculator",
   "author": "Epoxy Calc User",
